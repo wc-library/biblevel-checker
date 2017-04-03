@@ -2,6 +2,24 @@
  * Scripts for index.php
  */
 
+/* Variables */
+
+// Spinning loading icon
+var loader = '<div class="loader"><svg class="circular" viewBox="25 25 50 50"><circle id="loader-circle" class="path" cx="50" cy="50" r="20" fill="none" stroke-width="3" stroke-miterlimit="10"/></svg></div>';
+
+
+/* Functions */
+
+/**
+ * Display spinning loading icon in an element
+ * @param targetId String identifer or jQuery object of the element to display the loader in
+ */
+function showLoader(targetId) {
+    // Function accepts string representing id or jQuery object of element
+    var targetElement = (targetId instanceof jQuery) ? targetId : $(targetId);
+    // Clear contents of target and show loader
+    targetElement.html(loader);
+}
 
 
 /* On page load */
