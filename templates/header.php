@@ -17,5 +17,12 @@
     <!-- Bootstrap.js -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
+    <?php
+    // If the current page has a corresponding .js file, include that as well
+    $page_basename = basename($_SERVER['SCRIPT_FILENAME'], '.php');
+    $script_path = "res/js/$page_basename.js";
+    if (file_exists($script_path))
+        echo "<script src='$script_path'></script>";
+    ?>
 </head>
 

@@ -254,8 +254,8 @@ th {
     border: 1px solid #ddd !important; } }
 @font-face {
   font-family: 'Glyphicons Halflings';
-  src: url("../../fonts/bootstrap/glyphicons-halflings-regular.eot");
-  src: url("../../fonts/bootstrap/glyphicons-halflings-regular.eot?#iefix") format("embedded-opentype"), url("../../fonts/bootstrap/glyphicons-halflings-regular.woff2") format("woff2"), url("../../fonts/bootstrap/glyphicons-halflings-regular.woff") format("woff"), url("../../fonts/bootstrap/glyphicons-halflings-regular.ttf") format("truetype"), url("../../fonts/bootstrap/glyphicons-halflings-regular.svg#glyphicons_halflingsregular") format("svg"); }
+  src: url("../fonts/bootstrap/glyphicons-halflings-regular.eot");
+  src: url("../fonts/bootstrap/glyphicons-halflings-regular.eot?#iefix") format("embedded-opentype"), url("../fonts/bootstrap/glyphicons-halflings-regular.woff2") format("woff2"), url("../fonts/bootstrap/glyphicons-halflings-regular.woff") format("woff"), url("../fonts/bootstrap/glyphicons-halflings-regular.ttf") format("truetype"), url("../fonts/bootstrap/glyphicons-halflings-regular.svg#glyphicons_halflingsregular") format("svg"); }
 .glyphicon {
   position: relative;
   top: 1px;
@@ -2874,7 +2874,7 @@ select[multiple].input-lg,
 .btn {
   display: inline-block;
   margin-bottom: 0;
-  font-weight: normal;
+  font-weight: bold;
   text-align: center;
   vertical-align: middle;
   touch-action: manipulation;
@@ -6125,8 +6125,8 @@ input[type=number],
   border: none;
   border-radius: 0;
   -webkit-appearance: none;
-  -webkit-box-shadow: inset 0 -1px 0 #ddd;
-  box-shadow: inset 0 -1px 0 #ddd;
+  -webkit-box-shadow: inset 0 -2px 0 #ddd;
+  box-shadow: inset 0 -2px 0 #ddd;
   font-size: 16px; }
   textarea:focus,
   textarea.form-control:focus,
@@ -6264,8 +6264,8 @@ select.form-control {
   background-size: 13px;
   background-repeat: no-repeat;
   background-position: right center;
-  -webkit-box-shadow: inset 0 -1px 0 #ddd;
-  box-shadow: inset 0 -1px 0 #ddd;
+  -webkit-box-shadow: inset 0 -2px 0 #ddd;
+  box-shadow: inset 0 -2px 0 #ddd;
   font-size: 16px;
   line-height: 1.5; }
   select::-ms-expand,
@@ -6611,5 +6611,16 @@ input[type="checkbox"],
 
 .carousel-caption h1, .carousel-caption h2, .carousel-caption h3, .carousel-caption h4, .carousel-caption h5, .carousel-caption h6 {
   color: inherit; }
+
+/* For Bootstrap styling on input[type="file"]
+ * See https://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3
+ */
+/* Bootstrap file upload input */
+input[type="file"].form-control-file {
+  display: none; }
+
+input[type="text"].form-control-file {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem; }
 
 /*# sourceMappingURL=index.css.map */
