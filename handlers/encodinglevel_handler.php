@@ -12,7 +12,8 @@ include_once '../config/api_key.php';
 const ELVL = [
     // Code for full level according to https://www.loc.gov/marc/bibliographic/bdleader.html
     '#' => 'Full-level',
-    //
+    // TODO: Verify that this character is intended to be Full-level like documentation states
+    ' ' => 'Full-level',
     1 => 'Full-level, material not examined',
     2 => 'Less-than-full level, material not examined',
     3 => 'Abbreviated level',
@@ -76,6 +77,7 @@ function get_bib_resource($oclc) {
 /**
  * TODO: documentation
  * @param string $marcxml_string Results of get_bib_resource()
+ * @return mixed|string
  */
 function check_encoding_level($marcxml_string) {
     // Return an empty string in the event of an error
@@ -90,13 +92,11 @@ function check_encoding_level($marcxml_string) {
         if ($marcxml->getName() == 'record') {
             $leader = $marcxml->{'leader'};
 
-            // TODO: TESTING
-            error_log($leader);
-
             $elvl_code = substr($leader, ELVL_POS, 1);
             // TODO: handle undefined indexes more elegantly
             $elvl = (array_key_exists($elvl_code,ELVL)) ?
                 ELVL[$elvl_code] : "ERROR: Unidentified level code '$elvl_code'";
+
             // TODO: indcate whether or not this meets minimum requirements
         }
 
