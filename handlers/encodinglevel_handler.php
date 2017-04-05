@@ -7,10 +7,12 @@ include_once '../config/api_key.php';
 // TODO: Throw exception if $api_key isn't set or is blank
 
 /* Constants */
+
 // Array mapping encoding level codes to their respective levels (see http://www.oclc.org/bibformats/en/fixedfield/elvl.html)
 const ELVL = [
     // Code for full level according to https://www.loc.gov/marc/bibliographic/bdleader.html
     '#' => 'Full-level',
+    //
     1 => 'Full-level, material not examined',
     2 => 'Less-than-full level, material not examined',
     3 => 'Abbreviated level',
@@ -42,6 +44,8 @@ const ELVL_POS = 17;
  */
 function format_api_url($oclc) {
     global $api_key;
+    // Remove any whitespace/new line characters
+    $oclc = trim($oclc);
     return "http://www.worldcat.org/webservices/catalog/content/$oclc?wskey=$api_key";
 }
 
@@ -53,6 +57,7 @@ function format_api_url($oclc) {
  */
 function get_bib_resource($oclc) {
     $url = format_api_url($oclc);
+
     // Retrieve MARCXML data for the resource
     $ch = curl_init();
     curl_setopt_array($ch, [
@@ -61,6 +66,7 @@ function get_bib_resource($oclc) {
         CURLOPT_TIMEOUT => 30
     ]);
     $marcxml_string = curl_exec($ch);
+
     curl_close($ch);
 
     return $marcxml_string;
@@ -72,7 +78,31 @@ function get_bib_resource($oclc) {
  * @param string $marcxml_string Results of get_bib_resource()
  */
 function check_encoding_level($marcxml_string) {
-    // TODO: retrieve the encoding level
+    // Return an empty string in the event of an error
+    $elvl = '';
+
+    // If $marcxml_string is false, then curl encountered an error
+    if($marcxml_string !== false) {
+        $marcxml = new SimpleXMLElement($marcxml_string);
+
+        // TODO: verify the following claim
+        // If resource was successfully retrieved, $marcxml->getName() should be 'record'
+        if ($marcxml->getName() == 'record') {
+            $leader = $marcxml->{'leader'};
+
+            // TODO: TESTING
+            error_log($leader);
+
+            $elvl_code = substr($leader, ELVL_POS, 1);
+            // TODO: handle undefined indexes more elegantly
+            $elvl = (array_key_exists($elvl_code,ELVL)) ?
+                ELVL[$elvl_code] : "ERROR: Unidentified level code '$elvl_code'";
+            // TODO: indcate whether or not this meets minimum requirements
+        }
+
+    }
+
+    return $elvl;
 }
 
 
