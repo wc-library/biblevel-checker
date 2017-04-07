@@ -27,7 +27,7 @@ include_once 'templates/header.php';
                        id="file-select-text" placeholder="Select a file." >
             </div>
             <?php // TODO: Allow user to customize what encoding levels they're looking for ?>
-            <input class="btn btn-primary" type="submit"
+            <input class="btn btn-primary" type="submit" disabled
                    id="file-select-submit" name="file-select-submit" value="Process File">
         </form>
     </div>
