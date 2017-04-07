@@ -38,10 +38,15 @@ function uploadFile(formData) {
 
 function displayResults(data) {
     // Results panel components
-    var resultsPanel = $('<div class="panel panel-default"></div>');
+    var resultsPanel = $('<div class="panel panel-primary"></div>');
     var resultsPanelHeading = $('<div class="panel-heading"></div>');
-    var resultsPanelHeadingContent = $('<a data-toggle="collapse" href="#results-collapse">Click here to see all encoding levels</a>');
+    var resultsPanelHeadingContent = $('<h3 class="panel-title collapse-toggle" data-toggle="collapse" href="#results-collapse">Click here to see all encoding levels <span class="glyphicon collapse-chevron"></span></h3>');
     var resultsPanelCollapse = $('<div id="results-collapse" class="panel-collapse collapse"></div>');
+    // Rotate chevron when div is collapsing/expanding
+    var resultsPanelChevron = resultsPanelHeadingContent.find('.collapse-chevron');
+    resultsPanelCollapse.on('show.bs.collapse hide.bs.collapse', function () {
+        resultsPanelChevron.toggleClass('expanded');
+    });
     var resultsPanelBody = $('<div class="panel-body"></div>');
     // Table containing the results of the encoding level check
     var resultsTable = $('<table class="table table-condensed table-striped"></table>');

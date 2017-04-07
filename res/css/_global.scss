@@ -7,7 +7,9 @@
 @import "bootswatch/bootswatch";
 
 // Mixins
+@import "mixins/transition";
 
 // Components
 @import "components/file-input";
 @import "components/loader";
+@import "components/collapse";
