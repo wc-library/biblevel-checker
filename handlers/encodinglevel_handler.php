@@ -4,7 +4,9 @@
  */
 
 include_once '../config/api_key.php';
-// TODO: Throw exception if $api_key isn't set or is blank
+// Throw an exception if $api_key hasn't been configured yet
+if (!isset($api_key) || $api_key == '')
+    throw new Exception('API key has not been configured. Please refer to README.md for setup instructions.');
 
 /* Constants */
 
