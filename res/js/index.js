@@ -14,7 +14,7 @@ var loader = '<div class="loader"><svg class="circular" viewBox="25 25 50 50"><c
  * Uploads file to be handled by server
  * @param formData FormData object with the appended file
  */
-// TODO: take callback functions for success and error as parameters
+// TODO: take callback functions for success and error as parameters?
 function uploadFile(formData) {
     $.ajax({
         url: 'handlers/encodinglevel_handler.php',
@@ -48,6 +48,10 @@ function showLoader(targetId) {
 }
 
 
+/**
+ *
+ * @param message
+ */
 function displayError(message) {
     var errorPanel = $('<div class="panel panel-default"></div>');
     var errorPanelBody = $('<div class="panel-body text-danger"></div>');

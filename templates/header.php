@@ -10,7 +10,7 @@
     <title><?php echo isset($title) ? $title : 'Bib Level Checker' ?></title>
 
     <!-- Stylesheet includes Bootstrap.css + Bootswatch theme -->
-    <link rel="stylesheet" href="res/css/index/index.css">
+    <link rel="stylesheet" href="res/css/index.css">
 
     <!-- jQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>

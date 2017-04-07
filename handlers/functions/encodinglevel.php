@@ -1,8 +1,9 @@
 <?php
 /**
- * Handles Ajax request for minimum encoding level checking.
+ * Functions for checking encoding level
  */
 
+// TODO: use more reliable filepath (since this is getting included in a different file)
 include_once '../config/api_key.php';
 // Throw an exception if $api_key hasn't been configured yet
 if (!isset($api_key) || $api_key == '')
@@ -42,7 +43,7 @@ const ELVL_POS = 17;
 
 /**
  * Formats the WorldCat Search API URL
- * @param string|int $oclc The OCLC number
+ * @param string|int $oclc The OCLC number of the record
  * @return string Formatted WorldCat Search API URL (includes the API key)
  */
 function format_api_url($oclc) {
@@ -54,14 +55,14 @@ function format_api_url($oclc) {
 
 
 /**
- * Retrieves the MARCXML data for a bibliographic resource using curl
+ * Retrieves the MARCXML data for a bibliographic record using curl
  * @param string|int $oclc The OCLC number
- * @return mixed MARCXML string of the bibliographic resource
+ * @return mixed MARCXML string of the bibliographic record
  */
-function get_bib_resource($oclc) {
+function get_bib_record($oclc) {
     $url = format_api_url($oclc);
 
-    // Retrieve MARCXML data for the resource
+    // Retrieve MARCXML data for the record
     $ch = curl_init();
     curl_setopt_array($ch, [
         CURLOPT_URL => $url,
@@ -78,7 +79,7 @@ function get_bib_resource($oclc) {
 
 /**
  * TODO: documentation
- * @param string $marcxml_string Results of get_bib_resource()
+ * @param string $marcxml_string Results of get_bib_record()
  * @return mixed|string
  */
 function check_encoding_level($marcxml_string) {
@@ -90,7 +91,7 @@ function check_encoding_level($marcxml_string) {
         $marcxml = new SimpleXMLElement($marcxml_string);
 
         // TODO: verify the following claim
-        // If resource was successfully retrieved, $marcxml->getName() should be 'record'
+        // If record was successfully retrieved, $marcxml->getName() should be 'record'
         if ($marcxml->getName() == 'record') {
             $leader = $marcxml->{'leader'};
 
@@ -106,8 +107,3 @@ function check_encoding_level($marcxml_string) {
 
     return $elvl;
 }
-
-
-/* Main script */
-
-// TODO: handle file uploads and return encoded data
