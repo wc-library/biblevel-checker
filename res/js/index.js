@@ -24,9 +24,10 @@ function uploadFile(formData) {
         data: formData,
         type: 'POST',
         success: function (data) {
+            // TODO: check data['error']
             // TODO: for testing, will handle formatting of data here in the future
-            console.log(data);
-            $('#output').text('Complete, see log.');
+            //console.log(data);
+            displayResults(data);
         },
         error: function (xhr, status, errorMessage) {
             displayError(errorMessage);
@@ -34,6 +35,41 @@ function uploadFile(formData) {
     });
 }
 
+
+function displayResults(data) {
+    // Results panel components
+    var resultsPanel = $('<div class="panel panel-default"></div>');
+    var resultsPanelHeading = $('<div class="panel-heading"></div>');
+    var resultsPanelHeadingContent = $('<a data-toggle="collapse" href="#results-collapse">Click here to see all encoding levels</a>');
+    var resultsPanelCollapse = $('<div id="results-collapse" class="panel-collapse collapse"></div>');
+    var resultsPanelBody = $('<div class="panel-body"></div>');
+    // Table containing the results of the encoding level check
+    var resultsTable = $('<table class="table table-condensed table-striped"></table>');
+    var resultsTableBody = $('<tbody></tbody>');
+    // TODO: add table heading
+
+    // Iterate through results and add them to the table
+    // TODO: handle check for below minimum encoding level here, too?
+    // TODO: highlight record rows below min encoding level as .danger
+    for (var i = 0; i < data['results'].length; i++) {
+        var result = data['results'][i];
+        var row = $('<tr></tr>');
+        var td0 = $('<td></td>');
+        td0.text(result['oclc']);
+        var td1 = $('<td></td>');
+        td1.text(result['elvl']);
+        row.append(td0, td1);
+        resultsTableBody.append(row);
+    }
+
+    // Assemble the results panel and display it in the output div
+    resultsPanelHeading.html(resultsPanelHeadingContent);
+    resultsTable.html(resultsTableBody);
+    resultsPanelBody.html(resultsTable);
+    resultsPanelCollapse.html(resultsPanelBody);
+    resultsPanel.append(resultsPanelHeading, resultsPanelCollapse);
+    $('#output').html(resultsPanel);
+}
 
 
 /**
@@ -49,8 +85,8 @@ function showLoader(targetId) {
 
 
 /**
- *
- * @param message
+ * Displays an error message in the output div
+ * @param message Message to display
  */
 function displayError(message) {
     var errorPanel = $('<div class="panel panel-default"></div>');

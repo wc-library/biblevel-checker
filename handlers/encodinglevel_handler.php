@@ -17,6 +17,8 @@ try {
 
     // Iterate through each number and check its encoding level
     foreach ($oclc_list as $index => $oclc) {
+        // reset timeout
+        set_time_limit(30);
         $marcxml_string = get_bib_record($oclc);
         $elvl = check_encoding_level($marcxml_string);
         $results[$index] = ['oclc' => trim($oclc), 'elvl' => $elvl];
