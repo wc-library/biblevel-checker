@@ -1,113 +1,34 @@
 <?php
 /**
- * Handles Ajax request for minimum encoding level checking.
+ * Handles Ajax file uploads for checking encoding level
  */
 
-include_once '../config/api_key.php';
-// Throw an exception if $api_key hasn't been configured yet
-if (!isset($api_key) || $api_key == '')
-    throw new Exception('API key has not been configured. Please refer to README.md for setup instructions.');
+// Data to return
+$data = [];
 
-/* Constants */
+try {
+    include_once 'functions/encodinglevel.php';
 
-// Array mapping encoding level codes to their respective levels (see http://www.oclc.org/bibformats/en/fixedfield/elvl.html)
-const ELVL = [
-    // Code for full level according to https://www.loc.gov/marc/bibliographic/bdleader.html
-    '#' => 'Full-level',
-    // TODO: Verify that this character is intended to be Full-level like documentation states
-    ' ' => 'Full-level',
-    1 => 'Full-level, material not examined',
-    2 => 'Less-than-full level, material not examined',
-    3 => 'Abbreviated level',
-    4 => 'Core-level',
-    5 => 'Partial (preliminary) level',
-    7 => 'Minimal-level',
-    8 => 'Prepublication level',
-    'I' => 'Full-level input by OCLC participants',
-    'K' => 'Minimal-level input by OCLC participants',
-    'L' => 'Full-level input added from a batch process',
-    'M' => 'Less-than-full added from a batch process',
-    'J' => 'Deleted record',
-    // 'u' and 'z' aren't listed in the API but are listed in the Library of Congress MARC documentation
-    // https://www.loc.gov/marc/bibliographic/bdleader.html
-    'u' => 'Unknown',
-    'z' => 'Not applicable'
-];
-// Position of the ELvl code in the MARCXML leader element (see https://www.loc.gov/marc/bibliographic/bdleader.html)
-const ELVL_POS = 17;
+    // Get array of $oclc numbers
+    $oclc_list = file($_FILES['oclc_list']['tmp_name']);
+    // $results[$i] = ['oclc' => OCLC number, 'elvl' => encoding level] where $i = corresponding index in $oclc_list
+    $results = [];
+    // TODO: return list of results that don't meet the minimum encoding level
 
-
-/* Functions */
-
-
-/**
- * Formats the WorldCat Search API URL
- * @param string|int $oclc The OCLC number
- * @return string Formatted WorldCat Search API URL (includes the API key)
- */
-function format_api_url($oclc) {
-    global $api_key;
-    // Remove any whitespace/new line characters
-    $oclc = trim($oclc);
-    return "http://www.worldcat.org/webservices/catalog/content/$oclc?wskey=$api_key";
-}
-
-
-/**
- * Retrieves the MARCXML data for a bibliographic resource using curl
- * @param string|int $oclc The OCLC number
- * @return mixed MARCXML string of the bibliographic resource
- */
-function get_bib_resource($oclc) {
-    $url = format_api_url($oclc);
-
-    // Retrieve MARCXML data for the resource
-    $ch = curl_init();
-    curl_setopt_array($ch, [
-        CURLOPT_URL => $url,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 30
-    ]);
-    $marcxml_string = curl_exec($ch);
-
-    curl_close($ch);
-
-    return $marcxml_string;
-}
-
-
-/**
- * TODO: documentation
- * @param string $marcxml_string Results of get_bib_resource()
- * @return mixed|string
- */
-function check_encoding_level($marcxml_string) {
-    // Return an empty string in the event of an error
-    $elvl = '';
-
-    // If $marcxml_string is false, then curl encountered an error
-    if($marcxml_string !== false) {
-        $marcxml = new SimpleXMLElement($marcxml_string);
-
-        // TODO: verify the following claim
-        // If resource was successfully retrieved, $marcxml->getName() should be 'record'
-        if ($marcxml->getName() == 'record') {
-            $leader = $marcxml->{'leader'};
-
-            $elvl_code = substr($leader, ELVL_POS, 1);
-            // TODO: handle undefined indexes more elegantly
-            $elvl = (array_key_exists($elvl_code,ELVL)) ?
-                ELVL[$elvl_code] : "ERROR: Unidentified level code '$elvl_code'";
-
-            // TODO: indcate whether or not this meets minimum requirements
-        }
-
+    // Iterate through each number and check its encoding level
+    foreach ($oclc_list as $index => $oclc) {
+        $marcxml_string = get_bib_record($oclc);
+        $elvl = check_encoding_level($marcxml_string);
+        $results[$index] = ['oclc' => trim($oclc), 'elvl' => $elvl];
     }
 
-    return $elvl;
+    $data['results'] = $results;
+}
+// Set $data['error'] if an exception was thrown
+catch (Exception $e) {
+    // TODO: set response header/exit code to reflect error
+    $data['error'] =  $e->getMessage();
 }
 
-
-/* Main script */
-
-// TODO: handle file uploads and return encoded data
+// Return JSON encoded data
+echo json_encode($data);
