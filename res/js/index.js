@@ -16,6 +16,8 @@ var loader = '<div class="loader"><svg class="circular" viewBox="25 25 50 50"><c
  */
 // TODO: take callback functions for success and error as parameters?
 function uploadFile(formData) {
+    // Disable form while uploading
+    disableUploadForm(true);
     $.ajax({
         url: 'handlers/encodinglevel_handler.php',
         dataType: 'json',
@@ -26,11 +28,13 @@ function uploadFile(formData) {
         success: function (data) {
             // TODO: check data['error']
             // TODO: for testing, will handle formatting of data here in the future
-            //console.log(data);
             displayResults(data);
         },
         error: function (xhr, status, errorMessage) {
             displayError(errorMessage);
+        },
+        complete: function () {
+            disableUploadForm(false);
         }
     });
 }
@@ -40,9 +44,8 @@ function uploadFile(formData) {
 function displayResults(data) {
 
     var panelHeadingString = '<div class="panel-heading"><h3 class="panel-title collapse-toggle" data-toggle="collapse" href="#results-collapse">Click here to see all encoding levels</h3></div>';
-
-    // TODO: add table heading
-    var tableString = '<table class="table table-condensed table-striped"><tbody>';
+    var theadString = '<thead><tr><th>OCLC Number</th><th>Encoding Level</th></tr></thead>';
+    var tableString = '<table class="table table-condensed table-striped">' + theadString + '<tbody>';
 
     // Iterate through results and add them to the table
     // TODO: handle check for below minimum encoding level here, too?
@@ -96,6 +99,21 @@ function displayError(message) {
 }
 
 
+/**
+ * Disables or enables the file upload form
+ * @param disable - disable file upload form if true, enable it if false
+ */
+function disableUploadForm(disable) {
+    $('#file-select-form').find(':input').prop('disabled', disable);
+    // Add/remove disabled class to file select button
+    if (disable) {
+        $('#file-select-btn').addClass('disabled');
+    } else {
+        $('#file-select-btn').removeClass('disabled');
+    }
+}
+
+
 /* On page load */
 $(function () {
 
@@ -138,7 +156,6 @@ $(function () {
             return;
         }
 
-        // TODO: disable form while file is being uploaded
         var file = fileSelectInput.prop('files')[0];
         var formData = new FormData();
         formData.append('oclc_list', file);
