@@ -36,43 +36,33 @@ function uploadFile(formData) {
 }
 
 
+// TODO: document and improve readability
 function displayResults(data) {
-    // Results panel components
-    var resultsPanel = $('<div class="panel panel-primary"></div>');
-    var resultsPanelHeading = $('<div class="panel-heading"></div>');
-    var resultsPanelHeadingContent = $('<h3 class="panel-title collapse-toggle" data-toggle="collapse" href="#results-collapse">Click here to see all encoding levels <span class="glyphicon collapse-chevron"></span></h3>');
-    var resultsPanelCollapse = $('<div id="results-collapse" class="panel-collapse collapse"></div>');
-    // Rotate chevron when div is collapsing/expanding
-    var resultsPanelChevron = resultsPanelHeadingContent.find('.collapse-chevron');
-    resultsPanelCollapse.on('show.bs.collapse hide.bs.collapse', function () {
-        resultsPanelChevron.toggleClass('expanded');
-    });
-    var resultsPanelBody = $('<div class="panel-body"></div>');
-    // Table containing the results of the encoding level check
-    var resultsTable = $('<table class="table table-condensed table-striped"></table>');
-    var resultsTableBody = $('<tbody></tbody>');
+
+    var panelHeadingString = '<div class="panel-heading"><h3 class="panel-title" data-toggle="collapse" href="#results-collapse">Click here to see all encoding levels</h3></div>';
+
     // TODO: add table heading
+    var tableString = '<table class="table table-condensed table-striped"><tbody>';
 
     // Iterate through results and add them to the table
     // TODO: handle check for below minimum encoding level here, too?
     // TODO: highlight record rows below min encoding level as .danger
-    for (var i = 0; i < data['results'].length; i++) {
-        var result = data['results'][i];
-        var row = $('<tr></tr>');
-        var td0 = $('<td></td>');
-        td0.text(result['oclc']);
-        var td1 = $('<td></td>');
-        td1.text(result['elvl']);
-        row.append(td0, td1);
-        resultsTableBody.append(row);
-    }
+    $.each(data['results'], function (i, item) {
+        tableString += '<tr><td>' + item['oclc'] + '</td><td>' + item['elvl'] + '</td></tr>';
+    });
+
+    tableString += '</tbody></table>';
+
+    var panelBodyString =
+        '<div id="results-collapse" class="panel-collapse collapse"><div class="panel-body">' + tableString + '</div></div>';
 
     // Assemble the results panel and display it in the output div
-    resultsPanelHeading.html(resultsPanelHeadingContent);
-    resultsTable.html(resultsTableBody);
-    resultsPanelBody.html(resultsTable);
-    resultsPanelCollapse.html(resultsPanelBody);
-    resultsPanel.append(resultsPanelHeading, resultsPanelCollapse);
+    var resultsPanel = $([
+        '<div class="panel panel-primary">',
+        panelHeadingString,
+        panelBodyString,
+        '</div>'
+    ].join('\n'));
     $('#output').html(resultsPanel);
 }
 
