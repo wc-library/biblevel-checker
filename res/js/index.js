@@ -156,9 +156,11 @@ $(function () {
             return;
         }
 
+        // Retrieve file from the input and upload
         var file = fileSelectInput.prop('files')[0];
         var formData = new FormData();
         formData.append('oclc_list', file);
+        formData.append('min-encoding-level', $('#min-encoding-level-select').find(':selected').val());
         showLoader(outputDiv);
         uploadFile(formData);
 

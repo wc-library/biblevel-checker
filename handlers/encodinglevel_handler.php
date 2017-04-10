@@ -11,6 +11,9 @@ try {
 
     // Get array of $oclc numbers
     $oclc_list = file($_FILES['oclc_list']['tmp_name']);
+    // Get min-encoding-level (default to 3 if not set by client)
+    $min_elvl = (isset($_POST['min-encoding-level'])) ? $_POST['min-encoding-level'] : 3;
+
     // $results[$i] = ['oclc' => OCLC number, 'elvl' => encoding level] where $i = corresponding index in $oclc_list
     $results = [];
     // TODO: return list of results that don't meet the minimum encoding level
