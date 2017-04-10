@@ -27,6 +27,21 @@ include_once 'templates/header.php';
                        id="file-select-text" placeholder="Select a file." >
             </div>
             <?php // TODO: Allow user to customize what encoding levels they're looking for ?>
+            <div class="form-group">
+                <label class="control-label" for="min-encoding-level-select">Minimum encoding level:</label>
+                <select class="form-control" required
+                        id="min-encoding-level-select" name="min-encoding-level">
+                    <option value=" ">Full-level</option>
+                    <option value="1">Full-level, material not examined</option>
+                    <option value="2">Less-than-full level, material not examined</option>
+                    <option value="3" selected>Abbreviated level</option>
+                    <option value="4">Core-level</option>
+                    <option value="5">Partial (preliminary) level</option>
+                    <option value="7">Minimal-level</option>
+                    <option value="8">Prepublication level</option>
+                    <?php // TODO: figure out if levels I-J are relevant? ?>
+                </select>
+            </div>
             <input class="btn btn-primary" type="submit" disabled
                    id="file-select-submit" name="file-select-submit" value="Process File">
         </form>

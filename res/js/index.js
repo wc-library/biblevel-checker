@@ -39,7 +39,7 @@ function uploadFile(formData) {
 // TODO: document and improve readability
 function displayResults(data) {
 
-    var panelHeadingString = '<div class="panel-heading"><h3 class="panel-title" data-toggle="collapse" href="#results-collapse">Click here to see all encoding levels</h3></div>';
+    var panelHeadingString = '<div class="panel-heading"><h3 class="panel-title collapse-toggle" data-toggle="collapse" href="#results-collapse">Click here to see all encoding levels</h3></div>';
 
     // TODO: add table heading
     var tableString = '<table class="table table-condensed table-striped"><tbody>';
@@ -84,11 +84,15 @@ function showLoader(targetId) {
  * @param message Message to display
  */
 function displayError(message) {
-    var errorPanel = $('<div class="panel panel-default"></div>');
-    var errorPanelBody = $('<div class="panel-body text-danger"></div>');
-    errorPanelBody.html('<span class="glyphicon glyphicon-info-sign"></span> ' + message);
-    errorPanel.html(errorPanelBody);
-    $('#output').html(errorPanel);
+    var errorPanelString =
+        [
+            '<div class="panel panel-default">',
+            '  <div class="panel-body text-danger">',
+            '    <span class="glyphicon glyphicon-info-sign"></span> ' + message,
+            '  </div>',
+            '</div>'
+        ].join('\n');
+    $('#output').html(errorPanelString);
 }
 
 
