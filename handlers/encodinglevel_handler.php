@@ -23,12 +23,15 @@ try {
         // reset timeout
         set_time_limit(30);
         $marcxml_string = get_bib_record($oclc);
-        $elvl = check_encoding_level($marcxml_string);
-        $results[$index] = ['oclc' => trim($oclc), 'elvl' => $elvl];
+        $elvl_code = get_elvl_code($marcxml_string);
+        $elvl_check_results = check_elvl_code($elvl_code, $min_elvl);
+        $results[$index] = ['oclc' => trim($oclc), 'elvl' => $elvl_check_results];
     }
 
     $data['results'] = $results;
 }
+
+
 // Set $data['error'] if an exception was thrown
 catch (Exception $e) {
     // TODO: set response header/exit code to reflect error

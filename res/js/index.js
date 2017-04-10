@@ -27,7 +27,6 @@ function uploadFile(formData) {
         type: 'POST',
         success: function (data) {
             // TODO: check data['error']
-            // TODO: for testing, will handle formatting of data here in the future
             displayResults(data);
         },
         error: function (xhr, status, errorMessage) {
@@ -51,7 +50,7 @@ function displayResults(data) {
     // TODO: handle check for below minimum encoding level here, too?
     // TODO: highlight record rows below min encoding level as .danger
     $.each(data['results'], function (i, item) {
-        tableString += '<tr><td>' + item['oclc'] + '</td><td>' + item['elvl'] + '</td></tr>';
+        tableString += '<tr><td>' + item['oclc'] + '</td><td>' + item['elvl']['elvl'] + '</td></tr>';
     });
 
     tableString += '</tbody></table>';

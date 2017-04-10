@@ -78,13 +78,13 @@ function get_bib_record($oclc) {
 
 
 /**
- * TODO: documentation
+ * Takes a MARCXML string for a bib record and returns the encoding level code
  * @param string $marcxml_string Results of get_bib_record()
- * @return mixed|string
+ * @return string The encoding level code or '?' if no valid code could be found
  */
-function check_encoding_level($marcxml_string) {
-    // Return an empty string in the event of an error
-    $elvl = '';
+function get_elvl_code($marcxml_string) {
+    // Return a question mark if the code can't be found
+    $elvl_code = '?';
 
     // If $marcxml_string is false, then curl encountered an error
     if($marcxml_string !== false) {
@@ -96,14 +96,28 @@ function check_encoding_level($marcxml_string) {
             $leader = $marcxml->{'leader'};
 
             $elvl_code = substr($leader, ELVL_POS, 1);
-            // TODO: handle undefined indexes more elegantly
-            $elvl = (array_key_exists($elvl_code,ELVL)) ?
-                ELVL[$elvl_code] : "ERROR: Unidentified level code '$elvl_code'";
-
-            // TODO: indcate whether or not this meets minimum requirements
+            // If $elvl_code isn't in the array of known codes, return '?' instead
+            if (!array_key_exists($elvl_code,ELVL))
+                $elvl_code = '?';
         }
 
     }
 
-    return $elvl;
+    return $elvl_code;
+}
+
+
+function check_elvl_code($elvl_code, $min_elvl = 3) {
+
+    // TODO: Determine what codes meet or exceed $min_elvl
+    $passed_check = true;
+
+    // If $elvl_code is a valid index, use the corresponding code interpretation. Otherwise, display an error
+    $elvl = (array_key_exists($elvl_code,ELVL)) ? ELVL[$elvl_code] : 'Encoding level could not be determined';
+
+    // results can be indexed by 0, 1 as well as 'elvl', 'passed-check'
+    $elvl_array = array_fill_keys([0, 'elvl'], $elvl);
+    $passed_check_array = array_fill_keys([1, 'passed-check'], $passed_check);
+    $results = $elvl_array + $passed_check_array;
+    return $results;
 }
