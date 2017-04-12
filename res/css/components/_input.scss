@@ -1,0 +1,27 @@
+/*
+ * Additional styling for inputs
+ */
+
+// prevent checkbox label text from getting highlighted if rapidly clicking
+div.checkbox {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+
+/* Bootstrap file upload input
+ * See https://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3
+ */
+
+// The file select button
+input[type="file"].form-control-file {
+  display: none;
+}
+
+// The text field used to display file name
+input[type="text"].form-control-file {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}

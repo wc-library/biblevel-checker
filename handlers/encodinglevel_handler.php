@@ -11,8 +11,8 @@ try {
 
     // Get array of $oclc numbers
     $oclc_list = file($_FILES['oclc_list']['tmp_name']);
-    // Get min-encoding-level (default to 3 if not set by client)
-    $min_elvl = (isset($_POST['min-encoding-level'])) ? $_POST['min-encoding-level'] : 3;
+    // Array of levels to highlight
+    $elvls = $_POST['encoding-levels'];
 
     // $results[$i] = ['oclc' => OCLC number, 'elvl' => encoding level] where $i = corresponding index in $oclc_list
     $results = [];
@@ -24,7 +24,7 @@ try {
         set_time_limit(30);
         $marcxml_string = get_bib_record($oclc);
         $elvl_code = get_elvl_code($marcxml_string);
-        $elvl_check_results = check_elvl_code($elvl_code, $min_elvl);
+        $elvl_check_results = check_elvl_code($elvl_code, $elvls);
         $results[$index] = ['oclc' => trim($oclc), 'elvl' => $elvl_check_results];
     }
 

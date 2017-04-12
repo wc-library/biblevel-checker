@@ -128,15 +128,50 @@ $(function () {
     $(':file').on('fileselect', function(event, numFiles, label) {
         var input = $('#file-select-text'),
             log = numFiles > 1 ? numFiles + ' files selected' : label;
+        // Don't enable submit button unless 1 or more encoding levels are selected
+        var nothingChecked = $('input[name="encoding-levels[]"]:checked').length === 0;
         if( input.length ) {
             input.val(log);
-            $('#file-select-submit').prop('disabled', false);
+            $('#file-select-submit').prop('disabled', nothingChecked);
         }
         // enable/disable submit button
         if (numFiles > 0) {
-            $('#file-select-submit').prop('disabled', false);
+            $('#file-select-submit').prop('disabled', nothingChecked);
         } else {
             $('#file-select-submit').prop('disabled', true);
+        }
+    });
+
+    // Add listener to select all checkbox
+    $('#encoding-levels-select-all').change(function () {
+        $('.encoding-level-checkbox').prop('checked', $(this).prop('checked'));
+        // Submit button won't be enabled if there aren't any files selected
+        if ($('#file-select-input').get(0).files.length > 0) {
+            // if nothing is checked, submit buttons should be disabled
+            $('input[type=submit]').prop('disabled', !$(this).prop('checked'));
+        }
+
+    });
+    // Add listeners to all encoding level checkboxes
+    $('.encoding-level-checkbox').change(function () {
+        // uncheck select all if this gets unchecked
+        if ($(this).prop('checked') === false) {
+            $('#encoding-levels-select-all').prop('checked', false);
+            // Disable submit buttons if nothing is checked
+            if ($('.encoding-level-checkbox:checked').length === 0) {
+                $('input[type=submit]').prop('disabled', true);
+            }
+        }
+        // if this was checked, re-enable submit buttons
+        else {
+            // Don't enable submit if there aren't any files selected
+            if ($('#file-select-input').get(0).files.length > 0)
+                $('input[type=submit]').prop('disabled', false);
+
+            // if everything else is checked, then set select all to checked
+            if ($('.encoding-level-checkbox:checked').length === $('.encoding-level-checkbox').length) {
+                $('#encoding-levels-select-all').prop('checked', true);
+            }
         }
     });
 
@@ -157,9 +192,11 @@ $(function () {
 
         // Retrieve file from the input and upload
         var file = fileSelectInput.prop('files')[0];
+        // FIXME: .val() won't work, use .each() and a function
+        var encodingLevels = $('input[name="encoding-levels[]"]:checked').val();
         var formData = new FormData();
         formData.append('oclc_list', file);
-        formData.append('min-encoding-level', $('#min-encoding-level-select').find(':selected').val());
+        formData.append('encoding-levels', encodingLevels);
         showLoader(outputDiv);
         uploadFile(formData);
 

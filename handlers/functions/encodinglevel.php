@@ -34,6 +34,16 @@ const ELVL = [
     'u' => 'Unknown',
     'z' => 'Not applicable'
 ];
+// Maps non-numeric codes to their numeric equivalents. 0 = full-level, -1 = unknown/error
+const ELVL_VAL = [
+    ' ' => 0, '#' => 0, 'I' => 0, 'L' => 0,
+    'M' => 2,
+    'K' => 7,
+    // Codes that don't map to a numeric equivalent (i.e. unknown/error)
+    'J' => -1,
+    'u' => -1,
+    'z' => -1
+];
 // Position of the ELvl code in the MARCXML leader element (see https://www.loc.gov/marc/bibliographic/bdleader.html)
 const ELVL_POS = 17;
 
@@ -107,10 +117,17 @@ function get_elvl_code($marcxml_string) {
 }
 
 
-function check_elvl_code($elvl_code, $min_elvl = 3) {
+function check_elvl_code($elvl_code, $target_elvls) {
 
     // TODO: Determine what codes meet or exceed $min_elvl
     $passed_check = true;
+
+    // Check if code is not numeric (http://stackoverflow.com/a/3377560)
+    if (!((string)(int) $elvl_code == $elvl_code)) {
+        // Get the equivalent numeric value (if there is one)
+        $elvl_code = array_key_exists($elvl_code, ELVL_VAL) ?
+            ELVL_VAL[$elvl_code] : -1;
+    }
 
     // If $elvl_code is a valid index, use the corresponding code interpretation. Otherwise, display an error
     $elvl = (array_key_exists($elvl_code,ELVL)) ? ELVL[$elvl_code] : 'Encoding level could not be determined';

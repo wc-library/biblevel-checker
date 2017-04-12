@@ -27,19 +27,63 @@ include_once 'templates/header.php';
                        id="file-select-text" placeholder="Select a file." >
             </div>
             <div class="form-group">
-                <label class="control-label" for="min-encoding-level-select">Minimum encoding level:</label>
-                <select class="form-control" required
-                        id="min-encoding-level-select" name="min-encoding-level">
-                    <option value=" ">Full-level</option>
-                    <option value="1">1 - Full-level, material not examined</option>
-                    <option value="2">2 - Less-than-full level, material not examined</option>
-                    <option value="3" selected>3 - Abbreviated level</option>
-                    <option value="4">4 - Core-level</option>
-                    <option value="5">5 - Partial (preliminary) level</option>
-                    <option value="7">7 - Minimal-level</option>
-                    <option value="8">8 - Prepublication level</option>
-                    <?php // TODO: figure out if levels I-J are relevant? ?>
-                </select>
+                <label class="control-label">
+                    Select which encoding levels to highlight:
+                </label>
+                <div id="encoding-level-select-div">
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="encoding-levels-select-all"><b>Select All</b></label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" class="encoding-level-checkbox"
+                                      name="encoding-levels[]" value="0">
+                            Full-level
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" class="encoding-level-checkbox"
+                                      name="encoding-levels[]" value="1">
+                            1 - Full-level, material not examined
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" class="encoding-level-checkbox"
+                                      name="encoding-levels[]" value="2">
+                            2 - Less-than-full level, material not examined
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" class="encoding-level-checkbox"
+                                      name="encoding-levels[]" value="3">
+                            3 - Abbreviated level
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" class="encoding-level-checkbox"
+                                      name="encoding-levels[]" value="4">
+                            4 - Core-level
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" class="encoding-level-checkbox"
+                                      name="encoding-levels[]" value="5">
+                            5 - Partial (preliminary) level
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" class="encoding-level-checkbox"
+                                      name="encoding-levels[]" value="7">
+                            7 - Minimal-level
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" class="encoding-level-checkbox"
+                                      name="encoding-levels[]" value="8">
+                            8 - Prepublication level
+                        </label>
+                    </div>
+
+                </div>
             </div>
             <input class="btn btn-primary" type="submit" disabled
                    id="file-select-submit" name="file-select-submit" value="Process File">
