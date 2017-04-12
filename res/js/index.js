@@ -48,9 +48,10 @@ function displayResults(data) {
 
     // Iterate through results and add them to the table
     // TODO: handle check for below minimum encoding level here, too?
-    // TODO: highlight record rows below min encoding level as .danger
     $.each(data['results'], function (i, item) {
-        tableString += '<tr><td>' + item['oclc'] + '</td><td>' + item['elvl']['elvl'] + '</td></tr>';
+        // Highlight records if they're at the target ELVL
+        var classString = item['elvl']['is-target-elvl'] ? ' class="info" ' : '';
+        tableString += '<tr' + classString + '><td>' + item['oclc'] + '</td><td>' + item['elvl']['elvl'] + '</td></tr>';
     });
 
     tableString += '</tbody></table>';
@@ -192,8 +193,10 @@ $(function () {
 
         // Retrieve file from the input and upload
         var file = fileSelectInput.prop('files')[0];
-        // FIXME: .val() won't work, use .each() and a function
-        var encodingLevels = $('input[name="encoding-levels[]"]:checked').val();
+        var encodingLevels = [];
+        $('input[name="encoding-levels[]"]:checked').each(function () {
+            encodingLevels.push($(this).val());
+        });
         var formData = new FormData();
         formData.append('oclc_list', file);
         formData.append('encoding-levels', encodingLevels);

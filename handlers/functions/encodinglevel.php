@@ -119,22 +119,22 @@ function get_elvl_code($marcxml_string) {
 
 function check_elvl_code($elvl_code, $target_elvls) {
 
-    // TODO: Determine what codes meet or exceed $min_elvl
-    $passed_check = true;
-
     // Check if code is not numeric (http://stackoverflow.com/a/3377560)
-    if (!((string)(int) $elvl_code == $elvl_code)) {
+    if ((string)(int) $elvl_code != $elvl_code) {
         // Get the equivalent numeric value (if there is one)
-        $elvl_code = array_key_exists($elvl_code, ELVL_VAL) ?
+        $elvl_val = array_key_exists($elvl_code, ELVL_VAL) ?
             ELVL_VAL[$elvl_code] : -1;
+    } else {
+        $elvl_val = $elvl_code;
     }
+    $is_target_elvl = in_array($elvl_val, $target_elvls);
 
     // If $elvl_code is a valid index, use the corresponding code interpretation. Otherwise, display an error
     $elvl = (array_key_exists($elvl_code,ELVL)) ? ELVL[$elvl_code] : 'Encoding level could not be determined';
 
-    // results can be indexed by 0, 1 as well as 'elvl', 'passed-check'
+    // results can be indexed by 0, 1 as well as 'elvl', 'is-target-elvl'
     $elvl_array = array_fill_keys([0, 'elvl'], $elvl);
-    $passed_check_array = array_fill_keys([1, 'passed-check'], $passed_check);
-    $results = $elvl_array + $passed_check_array;
+    $is_target_array = array_fill_keys([1, 'is-target-elvl'], $is_target_elvl);
+    $results = $elvl_array + $is_target_array;
     return $results;
 }

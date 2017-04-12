@@ -502,8 +502,8 @@ $state-success-text:             $brand-success !default;
 $state-success-bg:               #dff0d8 !default;
 $state-success-border:           darken(adjust-hue($state-success-bg, -10), 5%) !default;
 
-$state-info-text:                $brand-info !default;
-$state-info-bg:                  #e1bee7 !default;
+$state-info-text:                $brand-primary !default;
+$state-info-bg:                  #90CAF9 !default;
 $state-info-border:              darken(adjust-hue($state-info-bg, -10), 7%) !default;
 
 $state-warning-text:             $brand-warning !default;
