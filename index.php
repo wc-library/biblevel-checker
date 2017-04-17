@@ -45,7 +45,7 @@ include_once 'templates/header.php';
                         <label class="input-group-btn">
                 <span class="btn btn-default" id="file-select-btn">
                     Choose File
-                    <input class="form-control-file" type="file" required
+                    <input class="form-control-file" type="file" required disabled
                            id="file-select-input" name="file-select-input" placeholder=""/>
                 </span>
                         </label>

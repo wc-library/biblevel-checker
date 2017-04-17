@@ -39,6 +39,9 @@ function uploadFile(formData) {
 }
 
 
+// TODO: write uploadText() function for use w/ textarea
+
+
 /**
  * Display the results of the encoding level check in #output
  * @param data Results of the encoding level check
@@ -132,6 +135,7 @@ function disableUploadForm(disable) {
     } else {
         $('#file-select-btn').removeClass('disabled');
     }
+    // TODO: disable nav-tabs
 }
 
 
@@ -157,11 +161,24 @@ $(function () {
             $('#file-select-submit').prop('disabled', nothingChecked);
         }
         // enable/disable submit button
+        // TODO: factor in textarea
         if (numFiles > 0) {
             $('#file-select-submit').prop('disabled', nothingChecked);
         } else {
             $('#file-select-submit').prop('disabled', true);
         }
+    });
+
+    // Add listeners to nav-tabs
+    $('#list-text-tab').on('hidden.bs.tab shown.bs.tab', function (e) {
+        // Set enabled state of #list-text-input based on which event is fired
+        var hidden = e.type === 'hidden';
+        $('#list-text-input').prop('disabled', hidden);
+    });
+    $('#file-select-tab').on('hidden.bs.tab shown.bs.tab', function (e) {
+        // Set enabled state of #file-select-input based on which event is fired
+        var hidden = e.type === 'hidden';
+        $('#file-select-input').prop('disabled',hidden);
     });
 
     // Add listener to select all checkbox
@@ -203,6 +220,7 @@ $(function () {
     var outputDiv = $('#output');
 
     // Assign listener to file upload form
+    // TODO: handle differently based on which tab is selected
     fileSelectForm.submit(function (event) {
         event.preventDefault();
 
