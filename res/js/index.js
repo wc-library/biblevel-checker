@@ -39,34 +39,55 @@ function uploadFile(formData) {
 }
 
 
-// TODO: document and improve readability
+/**
+ * Display the results of the encoding level check in #output
+ * @param data Results of the encoding level check
+ */
 function displayResults(data) {
-
-    var panelHeadingString = '<div class="panel-heading"><h3 class="panel-title collapse-toggle" data-toggle="collapse" href="#results-collapse">Click here to see all encoding levels</h3></div>';
-    var theadString = '<thead><tr><th>OCLC Number</th><th>Encoding Level</th></tr></thead>';
-    var tableString = '<table class="table table-condensed table-striped">' + theadString + '<tbody>';
+    // Higlighted results
+    var highlightedTheadString = '<thead><tr><th>OCLC Number</th><th>Encoding Level</th></tr></thead>';
+    var highlightedTableString = '<table class="table table-condensed table-striped">' + highlightedTheadString + '<tbody>';
+    // All results
+    var resultsTheadString = '<thead><tr><th>OCLC Number</th><th>Encoding Level</th></tr></thead>';
+    var resultsTableString = '<table class="table table-condensed table-striped">' + resultsTheadString + '<tbody>';
 
     // Iterate through results and add them to the table
-    // TODO: handle check for below minimum encoding level here, too?
     $.each(data['results'], function (i, item) {
-        // Highlight records if they're at the target ELVL
-        var classString = item['elvl']['is-target-elvl'] ? ' class="info" ' : '';
-        tableString += '<tr' + classString + '><td>' + item['oclc'] + '</td><td>' + item['elvl']['elvl'] + '</td></tr>';
+        var isTarget = item['elvl']['is-target-elvl'];
+        var tdString = '<td>' + item['oclc'] + '</td><td>' + item['elvl']['elvl'] + '</td>';
+        // Add to highlighted table if the record is at one of the target ELVLs
+        if (isTarget) {
+            highlightedTableString += '<tr>' + tdString + '</tr>';
+        }
+        // Highlight row in all results table if target level is met
+        var classString = isTarget ? ' class="info" ' : '';
+        resultsTableString += '<tr' + classString + '>' + tdString + '</tr>';
     });
+    highlightedTableString += '</tbody></table>';
+    resultsTableString += '</tbody></table>';
 
-    tableString += '</tbody></table>';
+    var outputDiv = $('#output');
+    // Assemble highlightedPanel and append to output
+    var highlightedPanelHeadingString = '<div class="panel-heading"><h3 class="panel-title">Records with selected encoding level(s)</h3></div>';
+    var highlightedPanelBodyString =
+        '<div class="panel-body">' + highlightedTableString + '</div>';
+    var highlightedPanel =
+        '<div class="panel panel-primary">' + highlightedPanelHeadingString +
+        highlightedPanelBodyString + '</div>';
+    outputDiv.html(highlightedPanel);
 
-    var panelBodyString =
-        '<div id="results-collapse" class="panel-collapse collapse"><div class="panel-body">' + tableString + '</div></div>';
-
-    // Assemble the results panel and display it in the output div
-    var resultsPanel = $([
-        '<div class="panel panel-primary">',
-        panelHeadingString,
-        panelBodyString,
-        '</div>'
-    ].join('\n'));
-    $('#output').html(resultsPanel);
+    // Assemble highlightedPanel and append to output
+    var resultsPanelTitleString = '<h3 id="results-collapse-toggle" class="panel-title collapse-toggle" data-toggle="collapse" href="#results-collapse">Click to see all results</h3>';
+    var resultsPanelHeadingString = '<div class="panel-heading">' + resultsPanelTitleString + '</div>';
+    var resultsPanelBody = $('<div id="results-collapse" class="panel-collapse collapse"></div>');
+    resultsPanelBody.html('<div class="panel-body">' + resultsTableString + '</div>');
+    // Rotate collapse chevron in #results-collapse-toggle when div is collapsing/expanding
+    resultsPanelBody.on('show.bs.collapse hide.bs.collapse', function () {
+        $('#results-collapse-toggle').toggleClass('expanded');
+    });
+    var resultsPanel = $('<div class="panel panel-info"></div>');
+    resultsPanel.append(resultsPanelHeadingString, resultsPanelBody);
+    outputDiv.append('<hr>',resultsPanel);
 }
 
 
