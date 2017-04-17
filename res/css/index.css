@@ -6621,7 +6621,8 @@ div.checkbox {
   -ms-user-select: none;
   user-select: none; }
 
-/* Bootstrap file upload input
+/*
+ * Bootstrap file upload input
  * See https://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3
  */
 input[type="file"].form-control-file {
@@ -6630,6 +6631,19 @@ input[type="file"].form-control-file {
 input[type="text"].form-control-file {
   padding-left: 0.75rem;
   padding-right: 0.75rem; }
+
+/*
+ * OCLC textarea styling
+ * (Theme textarea didn't look like an input)
+ */
+textarea.list-text-area, textarea.form-control.list-text-area {
+  padding: 15px;
+  border: none;
+  border-radius: 2px;
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  background: #fff;
+  resize: none; }
 
 /* for loading icon, from http://codepen.io/jczimm/pen/vEBpoL */
 .loader {
@@ -6716,5 +6730,11 @@ input[type="text"].form-control-file {
     -ms-transform: rotate(180deg);
     -webkit-transform: rotate(180deg);
     transform: rotate(180deg); }
+
+/*
+ * Supplement Bootstrap styling of its nav classes
+ */
+.tab-content {
+  margin-top: 15px; }
 
 /*# sourceMappingURL=index.css.map */
