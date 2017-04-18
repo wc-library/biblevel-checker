@@ -4,9 +4,13 @@
 
 /* Variables */
 
+// TODO: use state object instead of several state variables
 // The function called when determining whether to disable/enable submit button
 // Will be set according to what tab is selected
 var formRequirementCheckFunction;
+// The function called on form submit. Returns a FormData object
+// Will be set according to what tab is selected
+var getFormDataFunction;
 // Spinning loading icon
 var loader = '<div class="loader"><svg class="circular" viewBox="25 25 50 50"><circle id="loader-circle" class="path" cx="50" cy="50" r="20" fill="none" stroke-width="3" stroke-miterlimit="10"/></svg></div>';
 
@@ -16,7 +20,7 @@ var loader = '<div class="loader"><svg class="circular" viewBox="25 25 50 50"><c
 /**
  * Get the selected file and return a FormData object with the file appended to it
  * @returns {FormData|boolean} FormData if there is a file to select. If there isn't, return
- * false and display an error.
+ * null and display an error.
  */
 function getFileSelectFormData() {
     var fileSelectInput = $('#file-select-input');
@@ -29,7 +33,31 @@ function getFileSelectFormData() {
     // Retrieve file from the input and upload
     var file = fileSelectInput.prop('files')[0];
     var formData = new FormData();
-    formData.append('oclc_list', file);
+    formData.append('oclc-list', file);
+    // So handler knows which type of data is being uploaded
+    formData.append('type', 'file');
+    return formData;
+}
+
+
+/**
+ * Get the entered text and return a FormData object with the data appended to it
+ * @returns {FormData|boolean} FormData if textarea isn't empty. If there isn't, return
+ * null and display an error.
+ */
+function getTextInputFormData() {
+    var listTextString = $('#list-text-input').val();
+    // Submit button is disabled if no text is entered, but just in case
+    if(listTextString === '') {
+        // TODO: throw error instead
+        displayError('Please enter 1 or more OCLC numbers.');
+        return null;
+    }
+    var listTextArray = listTextString.split('\n');
+    var formData = new FormData();
+    formData.append('oclc-list', listTextArray);
+    // So handler knows which type of data is being uploaded
+    formData.append('type', 'text');
     return formData;
 }
 
@@ -38,7 +66,7 @@ function getFileSelectFormData() {
  * Uploads file to be handled by server
  * @param formData FormData object with the appended file
  */
-// TODO: take callback functions for success and error as parameters?
+// TODO: rename to uploadData
 function uploadFile(formData) {
     // Disable form while uploading
     disableUploadForm(true);
@@ -61,9 +89,6 @@ function uploadFile(formData) {
         }
     });
 }
-
-
-// TODO: write uploadText() function for use w/ textarea
 
 
 /**
@@ -149,12 +174,13 @@ function displayError(message) {
 
 /**
  * Disables or enables the file upload form
- * @param disable - disable file upload form if true, enable it if false
+ * @param setDisabled - disable file upload form if true, enable it if false
  */
-function disableUploadForm(disable) {
-    $('#file-select-form').find(':input').prop('disabled', disable);
+function disableUploadForm(setDisabled) {
+    // TODO: only disable/enable input for the currently visible tab
+    $('#file-select-form').find(':input').prop('disabled', setDisabled);
     // Add/remove disabled class to file select button
-    if (disable) {
+    if (setDisabled) {
         $('#file-select-btn').addClass('disabled');
     } else {
         $('#file-select-btn').removeClass('disabled');
@@ -252,8 +278,9 @@ $(function () {
             listTextInput.off('change input', onTextInput);
         } else {
             listTextInput.on('change input', onTextInput);
-            // Set formRequirementCheckFunction and refresh state of submit button
+            // Set state functions and refresh state of submit button
             formRequirementCheckFunction = textEntered;
+            getFormDataFunction = getTextInputFormData;
             refreshSubmitButtonState();
         }
     });
@@ -267,8 +294,9 @@ $(function () {
             fileSeletInput.off('fileselect', onFileSelect);
         } else {
             fileSeletInput.on('fileselect', onFileSelect);
-            // Set formRequirementCheckFunction and refresh state of submit button
+            // Set state functions and refresh state of submit button
             formRequirementCheckFunction = fileSelected;
+            getFormDataFunction = getFileSelectFormData;
             refreshSubmitButtonState();
         }
     });
@@ -276,6 +304,7 @@ $(function () {
     // #list-text-tab is selected by default, so add listener and set state on page load
     $('#list-text-input').on('change input', onTextInput);
     formRequirementCheckFunction = textEntered;
+    getFormDataFunction = getTextInputFormData;
 
     // Add listener to select all checkbox
     $('#encoding-levels-select-all').change(function () {
@@ -308,7 +337,7 @@ $(function () {
     fileSelectForm.submit(function (event) {
         event.preventDefault();
 
-        var formData = getFileSelectFormData();
+        var formData = getFormDataFunction();
         // Don't continue data if formData is null
         if (formData === null) {
             // TODO: use try-catch instead

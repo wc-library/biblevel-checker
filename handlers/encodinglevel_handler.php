@@ -9,10 +9,16 @@ $data = [];
 try {
     include_once 'functions/encodinglevel.php';
 
-    // Get array of $oclc numbers
-    $oclc_list = file($_FILES['oclc_list']['tmp_name']);
+    // Determine if data is a file or text
+    $type = $_POST['type'];
+    // Get array of OCLC numbers
+    $oclc_list = ($type == 'file') ?
+        file($_FILES['oclc-list']['tmp_name']) : explode(',', $_POST['oclc-list']);
     // Array of levels to highlight
     $elvls = explode(',', $_POST['encoding-levels']);
+
+    // TODO: TESTING
+    error_log(print_r($oclc_list,true));
 
 
     // $results[$i] = ['oclc' => OCLC number, 'elvl' => encoding level] where $i = corresponding index in $oclc_list
@@ -24,6 +30,9 @@ try {
         set_time_limit(30);
         // Remove any whitespace or non-numeric characters from the string
         $oclc = fix_oclc($oclc);
+        // TODO: TESTING
+        $var_type = gettype($oclc);
+        error_log("oclc = $oclc ($var_type)");
 
         $marcxml_string = get_bib_record($oclc);
         $elvl_code = get_elvl_code($marcxml_string);
