@@ -32,7 +32,7 @@ include_once 'templates/header.php';
                     <div class="form-group" id="list-text-group">
                         <label for="list-text-input">
                             <?php // TODO: phrase more eloquently ?>
-                            Type/paste each OCLC number separated by new lines (i.e. press enter after each number):
+                            Type/paste each OCLC number separated by a new line (i.e. press enter after each number):
                         </label>
                         <textarea class="form-control list-text-area" rows="5" required id="list-text-input"
                                   placeholder="Put each OCLC number on its own line"></textarea>

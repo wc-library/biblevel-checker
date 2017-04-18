@@ -4,6 +4,9 @@
 
 /* Variables */
 
+// The function called when determining whether to disable/enable submit button
+// Will be set according to what tab is selected
+var formRequirementCheckFunction;
 // Spinning loading icon
 var loader = '<div class="loader"><svg class="circular" viewBox="25 25 50 50"><circle id="loader-circle" class="path" cx="50" cy="50" r="20" fill="none" stroke-width="3" stroke-miterlimit="10"/></svg></div>';
 
@@ -139,6 +142,72 @@ function disableUploadForm(disable) {
 }
 
 
+/**
+ * Event listener function for handling fileselect event
+ * @param event The event object
+ * @param numFiles Number of files selected
+ * @param label Name of the file selected
+ */
+function onFileSelect(event, numFiles, label) {
+    var input = $('#file-select-text'),
+        log = numFiles > 1 ? numFiles + ' files selected' : label;
+    if( input.length ) {
+        input.val(log);
+    }
+    // refresh submit button state
+    refreshSubmitButtonState();
+}
+
+
+/**
+ * Event listener function for handling changes to the textarea
+ * @param event The event object
+ */
+function onTextInput(event) {
+    // Refresh submit button state
+    refreshSubmitButtonState();
+}
+
+
+/**
+ * Form requirement check function for #file-select-tab
+ * @returns {boolean} True if a file is selected
+ */
+function fileSelected() {
+    return $('#file-select-input').get(0).files.length > 0;
+}
+
+
+/**
+ * Form requirement check function for #list-text-tab
+ * @returns {boolean} True if textarea is not empty
+ */
+function textEntered() {
+    return $('#list-text-input').val() !== '';
+}
+
+
+/**
+ * Form requirement check function for encoding level checkboxes
+ * @returns {boolean} True if at least one encoding level is checked
+ */
+function encodingLevelChecked() {
+    return $('.encoding-level-checkbox:checked').length > 0;
+}
+
+
+/**
+ * Enable/disable submit button based on form requirements.
+ * Submit button will only be enabled if 1+ ELVLs are checked and if the currently selected
+ * tab's input isn't empty (determined by the currently set formRequirementCheckFunction)
+ */
+function refreshSubmitButtonState() {
+    // disabled = false if current form requirement function & encoding level check functions are true
+    var setDisabled = !(formRequirementCheckFunction() && encodingLevelChecked());
+    $('input[type=submit]').prop('disabled', setDisabled);
+}
+
+
 /* On page load */
 $(function () {
 
@@ -150,68 +219,63 @@ $(function () {
             label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
         input.trigger('fileselect', [numFiles, label]);
     });
-    // Listener for fileselect event
-    $(':file').on('fileselect', function(event, numFiles, label) {
-        var input = $('#file-select-text'),
-            log = numFiles > 1 ? numFiles + ' files selected' : label;
-        // Don't enable submit button unless 1 or more encoding levels are selected
-        var nothingChecked = $('input[name="encoding-levels[]"]:checked').length === 0;
-        if( input.length ) {
-            input.val(log);
-            $('#file-select-submit').prop('disabled', nothingChecked);
-        }
-        // enable/disable submit button
-        // TODO: factor in textarea
-        if (numFiles > 0) {
-            $('#file-select-submit').prop('disabled', nothingChecked);
-        } else {
-            $('#file-select-submit').prop('disabled', true);
-        }
-    });
 
     // Add listeners to nav-tabs
     $('#list-text-tab').on('hidden.bs.tab shown.bs.tab', function (e) {
         // Set enabled state of #list-text-input based on which event is fired
         var hidden = e.type === 'hidden';
-        $('#list-text-input').prop('disabled', hidden);
+        var listTextInput = $('#list-text-input');
+        listTextInput.prop('disabled', hidden);
+        // Toggle listeners
+        if (hidden) {
+            listTextInput.off('change input', onTextInput);
+        } else {
+            listTextInput.on('change input', onTextInput);
+            // Set formRequirementCheckFunction and refresh state of submit button
+            formRequirementCheckFunction = textEntered;
+            refreshSubmitButtonState();
+        }
     });
     $('#file-select-tab').on('hidden.bs.tab shown.bs.tab', function (e) {
         // Set enabled state of #file-select-input based on which event is fired
         var hidden = e.type === 'hidden';
-        $('#file-select-input').prop('disabled',hidden);
+        var fileSeletInput = $('#file-select-input');
+        fileSeletInput.prop('disabled',hidden);
+        // Toggle listeners
+        if (hidden) {
+            fileSeletInput.off('fileselect', onFileSelect);
+        } else {
+            fileSeletInput.on('fileselect', onFileSelect);
+            // Set formRequirementCheckFunction and refresh state of submit button
+            formRequirementCheckFunction = fileSelected;
+            refreshSubmitButtonState();
+        }
     });
+
+    // #list-text-tab is selected by default, so add listener and set state on page load
+    $('#list-text-input').on('change input', onTextInput);
+    formRequirementCheckFunction = textEntered;
 
     // Add listener to select all checkbox
     $('#encoding-levels-select-all').change(function () {
         $('.encoding-level-checkbox').prop('checked', $(this).prop('checked'));
-        // Submit button won't be enabled if there aren't any files selected
-        if ($('#file-select-input').get(0).files.length > 0) {
-            // if nothing is checked, submit buttons should be disabled
-            $('input[type=submit]').prop('disabled', !$(this).prop('checked'));
-        }
-
+        // Refresh submit button state
+        refreshSubmitButtonState();
     });
     // Add listeners to all encoding level checkboxes
     $('.encoding-level-checkbox').change(function () {
         // uncheck select all if this gets unchecked
         if ($(this).prop('checked') === false) {
             $('#encoding-levels-select-all').prop('checked', false);
-            // Disable submit buttons if nothing is checked
-            if ($('.encoding-level-checkbox:checked').length === 0) {
-                $('input[type=submit]').prop('disabled', true);
-            }
         }
-        // if this was checked, re-enable submit buttons
         else {
-            // Don't enable submit if there aren't any files selected
-            if ($('#file-select-input').get(0).files.length > 0)
-                $('input[type=submit]').prop('disabled', false);
-
             // if everything else is checked, then set select all to checked
             if ($('.encoding-level-checkbox:checked').length === $('.encoding-level-checkbox').length) {
                 $('#encoding-levels-select-all').prop('checked', true);
             }
         }
+        // Refresh submit button state
+        refreshSubmitButtonState();
     });
 
 
