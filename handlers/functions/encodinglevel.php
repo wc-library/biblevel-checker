@@ -52,14 +52,23 @@ const ELVL_POS = 17;
 
 
 /**
+ * Remove any non-numeric characters from the string to ensure the OCLC number format is valid
+ * @param string $oclc The OCLC number to fix
+ * @return string The fixed OCLC number
+ */
+function fix_oclc($oclc) {
+    // Remove all non-numeric characters (e.g. whitespace, letters, punctuation, etc)
+    return preg_replace("/[^0-9]/", "", $oclc);
+}
+
+
+/**
  * Formats the WorldCat Search API URL
  * @param string|int $oclc The OCLC number of the record
  * @return string Formatted WorldCat Search API URL (includes the API key)
  */
 function format_api_url($oclc) {
     global $api_key;
-    // Remove any whitespace/new line characters
-    $oclc = trim($oclc);
     return "http://www.worldcat.org/webservices/catalog/content/$oclc?wskey=$api_key";
 }
 

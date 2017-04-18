@@ -22,7 +22,9 @@ try {
     foreach ($oclc_list as $index => $oclc) {
         // reset timeout
         set_time_limit(30);
-        $oclc = trim($oclc);
+        // Remove any whitespace or non-numeric characters from the string
+        $oclc = fix_oclc($oclc);
+
         $marcxml_string = get_bib_record($oclc);
         $elvl_code = get_elvl_code($marcxml_string);
         $elvl_check_results = check_elvl_code($elvl_code, $elvls);
