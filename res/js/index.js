@@ -14,6 +14,27 @@ var loader = '<div class="loader"><svg class="circular" viewBox="25 25 50 50"><c
 /* Functions */
 
 /**
+ * Get the selected file and return a FormData object with the file appended to it
+ * @returns {FormData|boolean} FormData if there is a file to select. If there isn't, return
+ * false and display an error.
+ */
+function getFileSelectFormData() {
+    var fileSelectInput = $('#file-select-input');
+    // Submit button is disabled if no files are selected, but just in case
+    if(fileSelectInput.prop('files').length === 0) {
+        // TODO: throw error instead
+        displayError('Please select a file.');
+        return null;
+    }
+    // Retrieve file from the input and upload
+    var file = fileSelectInput.prop('files')[0];
+    var formData = new FormData();
+    formData.append('oclc_list', file);
+    return formData;
+}
+
+
+/**
  * Uploads file to be handled by server
  * @param formData FormData object with the appended file
  */
@@ -280,7 +301,6 @@ $(function () {
 
 
     var fileSelectForm = $('#file-select-form');
-    var fileSelectInput = $('#file-select-input');
     var outputDiv = $('#output');
 
     // Assign listener to file upload form
@@ -288,21 +308,20 @@ $(function () {
     fileSelectForm.submit(function (event) {
         event.preventDefault();
 
-        // Submit button is disabled if no files are selected, but just in case
-        if(fileSelectInput.prop('files').length === 0) {
-            displayError('Please select a file.');
+        var formData = getFileSelectFormData();
+        // Don't continue data if formData is null
+        if (formData === null) {
+            // TODO: use try-catch instead
             return;
         }
 
-        // Retrieve file from the input and upload
-        var file = fileSelectInput.prop('files')[0];
+        // Append encoding levels
         var encodingLevels = [];
         $('input[name="encoding-levels[]"]:checked').each(function () {
             encodingLevels.push($(this).val());
         });
-        var formData = new FormData();
-        formData.append('oclc_list', file);
         formData.append('encoding-levels', encodingLevels);
+        // Show loader and send data to server
         showLoader(outputDiv);
         uploadFile(formData);
 
