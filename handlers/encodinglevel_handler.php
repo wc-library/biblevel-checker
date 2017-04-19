@@ -42,8 +42,8 @@ try {
 
 // Set $data['error'] if an exception was thrown
 catch (Exception $e) {
-    // TODO: set response header/exit code to reflect error
     $data['error'] =  $e->getMessage();
+    header($_SERVER['SERVER_PROTOCOL'] . ' 500 Internal Server Error', true, 500);
 }
 
 // Return JSON encoded data

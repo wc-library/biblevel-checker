@@ -113,11 +113,19 @@ function uploadFile(formData) {
         data: formData,
         type: 'POST',
         success: function (data) {
-            // TODO: check data['error']
             displayResults(data);
         },
         error: function (xhr, status, errorMessage) {
-            displayError(errorMessage);
+            // Get response text from server
+            var data;
+            try {
+                data = JSON.parse(xhr.responseText);
+            } catch (e) {
+                data = false;
+            }
+            // If data['error'] doesn't exist or response text wasn't valid JSON, display the HTTP status response
+            var messageString = (data && data.hasOwnProperty('error')) ? data['error'] : errorMessage;
+            displayError(messageString);
         },
         complete: function () {
             disableUploadForm(false);
