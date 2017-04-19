@@ -61,9 +61,8 @@ function getFileSelectFormData() {
     var fileSelectInput = $('#file-select-input');
     // Submit button is disabled if no files are selected, but just in case
     if(fileSelectInput.prop('files').length === 0) {
-        // TODO: throw error instead
-        displayError('Please select a file.');
-        return null;
+        // Throw error if a file isn't selected
+        throw 'Please select a file.';
     }
     // Retrieve file from the input and upload
     var file = fileSelectInput.prop('files')[0];
@@ -84,9 +83,8 @@ function getTextInputFormData() {
     var listTextString = $('#list-text-input').val();
     // Submit button is disabled if no text is entered, but just in case
     if(listTextString === '') {
-        // TODO: throw error instead
-        displayError('Please enter 1 or more OCLC numbers.');
-        return null;
+        // Throw error if no text is entered
+        throw 'Please enter 1 or more OCLC numbers.';
     }
     var listTextArray = listTextString.split('\n');
     var formData = new FormData();
@@ -411,11 +409,15 @@ $(function () {
     // Assign listener to file upload form
     fileSelectForm.submit(function (event) {
         event.preventDefault();
+        console.log('submit test');
 
-        var formData = formState.getFormData();
-        // Don't continue data if formData is null
-        if (formData === null) {
-            // TODO: use try-catch instead
+        // If required form data isn't present, display an error and return
+        var formData;
+        try {
+            formData = formState.getFormData();
+        } catch (e) {
+            // Display error message
+            displayError(e);
             return;
         }
 
