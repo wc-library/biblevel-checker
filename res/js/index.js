@@ -145,9 +145,11 @@ function displayResults(data) {
     // All results
     var resultsTheadString = '<thead><tr><th>OCLC Number</th><th>Encoding Level</th></tr></thead>';
     var resultsTableString = '<table class="table table-condensed table-striped">' + resultsTheadString + '<tbody>';
+    // TODO: add error table for OCLC numbers whose ELVL couldn't be determined
     // Check if either table is empty
     var highlightedTableIsEmpty = true;
     var resultsTableIsEmpty = true;
+    // TODO: check if error table is empty and don't display it if so
 
     // Iterate through results and add them to the table
     $.each(data['results'], function (i, item) {
@@ -186,7 +188,7 @@ function displayResults(data) {
         highlightedPanelBodyString + '</div>';
     outputDiv.html(highlightedPanel);
 
-    // Assemble highlightedPanel and append to output
+    // Assemble resultsPanel and append to output
     var resultsPanelTitleString = '<h3 id="results-collapse-toggle" class="panel-title collapse-toggle" data-toggle="collapse" href="#results-collapse">Click to see all results</h3>';
     var resultsPanelHeadingString = '<div class="panel-heading">' + resultsPanelTitleString + '</div>';
     var resultsPanelBody = $('<div id="results-collapse" class="panel-collapse collapse"></div>');
@@ -265,6 +267,7 @@ function disableUploadForm(setDisabled) {
     $('input[type="checkbox"]').prop('disabled', setDisabled);
     $('#file-select-submit').prop('disabled', setDisabled);
     $('ul.nav-tabs').find('a').prop('disabled', setDisabled);
+    // TODO: collapse form?
 }
 
 
@@ -406,7 +409,6 @@ $(function () {
     var outputDiv = $('#output');
 
     // Assign listener to file upload form
-    // TODO: handle differently based on which tab is selected
     fileSelectForm.submit(function (event) {
         event.preventDefault();
 

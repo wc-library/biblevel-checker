@@ -3,7 +3,6 @@
  * Functions for checking encoding level
  */
 
-// TODO: use more reliable filepath (since this is getting included in a different file)
 include_once $_SERVER['DOCUMENT_ROOT'] . '/biblevel-checker/config/api_key.php';
 // Throw an exception if $api_key hasn't been configured yet
 if (!isset($api_key) || $api_key == '')
@@ -110,7 +109,6 @@ function get_elvl_code($marcxml_string) {
     if($marcxml_string !== false) {
         $marcxml = new SimpleXMLElement($marcxml_string);
 
-        // TODO: verify the following claim
         // If record was successfully retrieved, $marcxml->getName() should be 'record'
         if ($marcxml->getName() == 'record') {
             $leader = $marcxml->{'leader'};
@@ -127,6 +125,12 @@ function get_elvl_code($marcxml_string) {
 }
 
 
+/**
+ * Determines the meaning of an ELVL code and checks if it is one of the the target levels
+ * @param string $elvl_code The ELVL code
+ * @param array $target_elvls An array of target ELVLs
+ * @return array
+ */
 function check_elvl_code($elvl_code, $target_elvls) {
 
     // Check if code is not numeric (http://stackoverflow.com/a/3377560)
@@ -140,6 +144,7 @@ function check_elvl_code($elvl_code, $target_elvls) {
     $is_target_elvl = in_array($elvl_val, $target_elvls);
 
     // If $elvl_code is a valid index, use the corresponding code interpretation. Otherwise, display an error
+    // TODO: return something different if code is invalid
     $elvl = (array_key_exists($elvl_code,ELVL)) ? ELVL[$elvl_code] : 'Encoding level could not be determined';
 
     // results can be indexed by 0, 1 as well as 'elvl', 'is-target-elvl'

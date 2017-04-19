@@ -32,6 +32,7 @@ try {
 
         $marcxml_string = get_bib_record($oclc);
         $elvl_code = get_elvl_code($marcxml_string);
+        // TODO: if check_elvl_code() determined $elvl_code was invalid, flag it acordingly
         $elvl_check_results = check_elvl_code($elvl_code, $elvls);
         $results[$index] = ['oclc' => $oclc, 'elvl' => $elvl_check_results];
     }
