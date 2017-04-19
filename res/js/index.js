@@ -12,27 +12,39 @@ var loader = '<div class="loader"><svg class="circular" viewBox="25 25 50 50"><c
 
 
 /* Objects */
-// TODO: document
 
+/**
+ * Prototype for state objects
+ * @param {function} formRequirementCheckFunction Function to call when determining if form
+ * requirements are met.
+ * @param {function} getFormDataFunction Function to retrieve the input value packaged as
+ * part of a FormData object.
+ * @param {function} disableInputFunction Function to disable/enable the form input.
+ * @constructor
+ */
 function StateObjectPrototype(
-    jQueryObject, formRequirementCheckFunction, getFormDataFunction, disableInputFunction) {
-    this.formInput = jQueryObject;
+    formRequirementCheckFunction, getFormDataFunction, disableInputFunction) {
     this.formRequirementCheck = formRequirementCheckFunction;
     this.getFormData = getFormDataFunction;
     this.disableInput = disableInputFunction;
 }
 
+/**
+ * Object representing the state where the file upload tab is selected
+ * @type {StateObjectPrototype}
+ */
 var fileSelectStateObject =
     new StateObjectPrototype(
-        $('#file-select-input'),
         fileSelected,
         getFileSelectFormData,
         disableFileSelect);
 
-
+/**
+ * Object representing the state where the text input tab is selected
+ * @type {StateObjectPrototype}
+ */
 var listTextStateObject =
     new StateObjectPrototype(
-        $('#list-text-input'),
         textEntered,
         getTextInputFormData,
         disableTextInput);

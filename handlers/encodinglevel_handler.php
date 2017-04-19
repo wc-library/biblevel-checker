@@ -17,10 +17,6 @@ try {
     // Array of levels to highlight
     $elvls = explode(',', $_POST['encoding-levels']);
 
-    // TODO: TESTING
-    error_log(print_r($oclc_list,true));
-
-
     // $results[$i] = ['oclc' => OCLC number, 'elvl' => encoding level] where $i = corresponding index in $oclc_list
     $results = [];
 
@@ -30,9 +26,9 @@ try {
         set_time_limit(30);
         // Remove any whitespace or non-numeric characters from the string
         $oclc = fix_oclc($oclc);
-        // TODO: TESTING
-        $var_type = gettype($oclc);
-        error_log("oclc = $oclc ($var_type)");
+        // If $oclc is empty, skip this iteration
+        if ($oclc == '')
+            continue;
 
         $marcxml_string = get_bib_record($oclc);
         $elvl_code = get_elvl_code($marcxml_string);
