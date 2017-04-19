@@ -4,15 +4,38 @@
 
 /* Variables */
 
-// TODO: use state object instead of several state variables
-// The function called when determining whether to disable/enable submit button
-// Will be set according to what tab is selected
-var formRequirementCheckFunction;
-// The function called on form submit. Returns a FormData object
-// Will be set according to what tab is selected
-var getFormDataFunction;
+// State object representing which tab is selected on the form
+var formState;
+
 // Spinning loading icon
 var loader = '<div class="loader"><svg class="circular" viewBox="25 25 50 50"><circle id="loader-circle" class="path" cx="50" cy="50" r="20" fill="none" stroke-width="3" stroke-miterlimit="10"/></svg></div>';
+
+
+/* Objects */
+// TODO: document
+
+function StateObjectPrototype(
+    jQueryObject, formRequirementCheckFunction, getFormDataFunction, disableInputFunction) {
+    this.formInput = jQueryObject;
+    this.formRequirementCheck = formRequirementCheckFunction;
+    this.getFormData = getFormDataFunction;
+    this.disableInput = disableInputFunction;
+}
+
+var fileSelectStateObject =
+    new StateObjectPrototype(
+        $('#file-select-input'),
+        fileSelected,
+        getFileSelectFormData,
+        disableFileSelect);
+
+
+var listTextStateObject =
+    new StateObjectPrototype(
+        $('#list-text-input'),
+        textEntered,
+        getTextInputFormData,
+        disableTextInput);
 
 
 /* Functions */
@@ -173,19 +196,40 @@ function displayError(message) {
 
 
 /**
- * Disables or enables the file upload form
- * @param setDisabled - disable file upload form if true, enable it if false
+ * Disables or enables the file select input
+ * @param {boolean} setDisabled Disable input if true, enable it if false
  */
-function disableUploadForm(setDisabled) {
-    // TODO: only disable/enable input for the currently visible tab
-    $('#file-select-form').find(':input').prop('disabled', setDisabled);
+function disableFileSelect(setDisabled) {
+    $('#file-select-input').prop('disabled', setDisabled);
     // Add/remove disabled class to file select button
     if (setDisabled) {
         $('#file-select-btn').addClass('disabled');
     } else {
         $('#file-select-btn').removeClass('disabled');
     }
-    // TODO: disable nav-tabs
+}
+
+
+/**
+ * Disables or enables the list text input
+ * @param {boolean} setDisabled Disable input if true, enable it if false
+ */
+function disableTextInput(setDisabled) {
+    $('#list-text-input').prop('disabled', setDisabled);
+}
+
+
+/**
+ * Disables or enables the form
+ * @param {boolean} setDisabled Disable form if true, enable it if false
+ */
+function disableUploadForm(setDisabled) {
+    // Disable/enable currently visible form input (prevents enabling inputs from the hidden tab)
+    formState.disableInput(setDisabled);
+
+    $('input[type="checkbox"]').prop('disabled', setDisabled);
+    $('#file-select-submit').prop('disabled', setDisabled);
+    $('ul.nav-tabs').find('a').prop('disabled', setDisabled);
 }
 
 
@@ -250,7 +294,7 @@ function encodingLevelChecked() {
  */
 function refreshSubmitButtonState() {
     // disabled = false if current form requirement function & encoding level check functions are true
-    var setDisabled = !(formRequirementCheckFunction() && encodingLevelChecked());
+    var setDisabled = !(formState.formRequirementCheck() && encodingLevelChecked());
     $('input[type=submit]').prop('disabled', setDisabled);
 }
 
@@ -275,12 +319,11 @@ $(function () {
         listTextInput.prop('disabled', hidden);
         // Toggle listeners
         if (hidden) {
-            listTextInput.off('change input', onTextInput);
+            listTextInput.off('change input paste', onTextInput);
         } else {
-            listTextInput.on('change input', onTextInput);
-            // Set state functions and refresh state of submit button
-            formRequirementCheckFunction = textEntered;
-            getFormDataFunction = getTextInputFormData;
+            listTextInput.on('change input paste', onTextInput);
+            // Set state and refresh state of submit button
+            formState = listTextStateObject;
             refreshSubmitButtonState();
         }
     });
@@ -294,17 +337,11 @@ $(function () {
             fileSeletInput.off('fileselect', onFileSelect);
         } else {
             fileSeletInput.on('fileselect', onFileSelect);
-            // Set state functions and refresh state of submit button
-            formRequirementCheckFunction = fileSelected;
-            getFormDataFunction = getFileSelectFormData;
+            // Set state and refresh state of submit button
+            formState = fileSelectStateObject;
             refreshSubmitButtonState();
         }
     });
-
-    // #list-text-tab is selected by default, so add listener and set state on page load
-    $('#list-text-input').on('change input', onTextInput);
-    formRequirementCheckFunction = textEntered;
-    getFormDataFunction = getTextInputFormData;
 
     // Add listener to select all checkbox
     $('#encoding-levels-select-all').change(function () {
@@ -312,6 +349,7 @@ $(function () {
         // Refresh submit button state
         refreshSubmitButtonState();
     });
+
     // Add listeners to all encoding level checkboxes
     $('.encoding-level-checkbox').change(function () {
         // uncheck select all if this gets unchecked
@@ -337,7 +375,7 @@ $(function () {
     fileSelectForm.submit(function (event) {
         event.preventDefault();
 
-        var formData = getFormDataFunction();
+        var formData = formState.getFormData();
         // Don't continue data if formData is null
         if (formData === null) {
             // TODO: use try-catch instead
@@ -355,4 +393,8 @@ $(function () {
         uploadFile(formData);
 
     });
+
+    // #list-text-tab is selected by default, so add listener and set state on page load
+    formState = listTextStateObject;
+    $('#list-text-input').on('change input paste', onTextInput);
 });
