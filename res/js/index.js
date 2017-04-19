@@ -96,11 +96,10 @@ function getTextInputFormData() {
 
 
 /**
- * Uploads file to be handled by server
- * @param formData FormData object with the appended file
+ * Uploads data to be handled by server
+ * @param {FormData} formData The data from the form to send to the handler
  */
-// TODO: rename to uploadData
-function uploadFile(formData) {
+function uploadData(formData) {
     // Disable form while uploading
     disableUploadForm(true);
     $.ajax({
@@ -429,7 +428,7 @@ $(function () {
         formData.append('encoding-levels', encodingLevels);
         // Show loader and send data to server
         showLoader(outputDiv);
-        uploadFile(formData);
+        uploadData(formData);
 
     });
 
