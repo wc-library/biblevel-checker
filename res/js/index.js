@@ -145,19 +145,34 @@ function displayResults(data) {
     // All results
     var resultsTheadString = '<thead><tr><th>OCLC Number</th><th>Encoding Level</th></tr></thead>';
     var resultsTableString = '<table class="table table-condensed table-striped">' + resultsTheadString + '<tbody>';
+    // Check if either table is empty
+    var highlightedTableIsEmpty = true;
+    var resultsTableIsEmpty = true;
 
     // Iterate through results and add them to the table
     $.each(data['results'], function (i, item) {
+        // Function only gets executed if we have results to display
+        resultsTableIsEmpty = false;
+
         var isTarget = item['elvl']['is-target-elvl'];
         var tdString = '<td>' + item['oclc'] + '</td><td>' + item['elvl']['elvl'] + '</td>';
         // Add to highlighted table if the record is at one of the target ELVLs
         if (isTarget) {
+            highlightedTableIsEmpty = false;
             highlightedTableString += '<tr>' + tdString + '</tr>';
         }
         // Highlight row in all results table if target level is met
         var classString = isTarget ? ' class="info" ' : '';
         resultsTableString += '<tr' + classString + '>' + tdString + '</tr>';
     });
+    // If no results are found and/or highlighted, display a message indicating such
+    if (highlightedTableIsEmpty) {
+        highlightedTableString += '<tr><td class="text-muted" colspan="2">No results found with the selected encoding level(s).</td></tr>';
+    }
+    if (resultsTableIsEmpty) {
+        resultsTableString += '<tr><td class="text-muted" colspan="2">No results found.</td></tr>';
+    }
+
     highlightedTableString += '</tbody></table>';
     resultsTableString += '</tbody></table>';
 
