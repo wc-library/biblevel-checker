@@ -402,11 +402,11 @@ $(function () {
     });
 
 
-    var fileSelectForm = $('#file-select-form');
+    var encodingLevelForm = $('#encoding-level-form');
     var outputDiv = $('#output');
 
     // Assign listener to file upload form
-    fileSelectForm.submit(function (event) {
+    encodingLevelForm.submit(function (event) {
         event.preventDefault();
         console.log('submit test');
 
