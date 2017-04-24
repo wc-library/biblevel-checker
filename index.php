@@ -116,7 +116,7 @@ include_once 'templates/header.php';
                 </div>
             </div>
             <input class="btn btn-primary" type="submit" disabled
-                   id="file-select-submit" name="file-select-submit" value="Process File">
+                   id="file-select-submit" name="file-select-submit" value="Submit">
         </form>
 
     </div>

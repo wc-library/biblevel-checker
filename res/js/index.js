@@ -187,6 +187,7 @@ function displayResults(data) {
     resultsTableString += '</tbody></table>';
 
     var outputDiv = $('#output');
+    outputDiv.html('<h2><span class="glyphicon glyphicon-ok-sign text-success"></span> Records Processed.</h2>');
 
     // Assemble highlightedPanel and append to output
     var highlightedPanelHeadingString = '<div class="panel-heading"><h3 class="panel-title">Records with selected encoding level(s)</h3></div>';
@@ -195,7 +196,7 @@ function displayResults(data) {
     var highlightedPanel =
         '<div class="panel panel-primary">' + highlightedPanelHeadingString +
         highlightedPanelBodyString + '</div>';
-    outputDiv.html(highlightedPanel);
+    outputDiv.append(highlightedPanel);
 
     // If any errors occurred, display the error table
     if (!errorTableIsEmpty) {
