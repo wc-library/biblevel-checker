@@ -6644,6 +6644,9 @@ textarea.list-text-area, textarea.form-control.list-text-area {
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
   background: #fff;
   resize: none; }
+  textarea.list-text-area:focus, textarea.form-control.list-text-area:focus {
+    -webkit-box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3); }
 
 /* for loading icon, from http://codepen.io/jczimm/pen/vEBpoL */
 .loader {

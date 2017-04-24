@@ -289,7 +289,6 @@ function disableUploadForm(setDisabled) {
     $('input[type="checkbox"]').prop('disabled', setDisabled);
     $('#file-select-submit').prop('disabled', setDisabled);
     $('ul.nav-tabs').find('a').prop('disabled', setDisabled);
-    // TODO: collapse form?
 }
 
 

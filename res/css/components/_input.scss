@@ -41,5 +41,7 @@ textarea.list-text-area, textarea.form-control.list-text-area {
   background: $panel-bg;
   // disable textarea resizing
   resize: none;
-  // TODO: add &:focus styling
+  &:focus {
+    @include box-shadow(0 3px 6px rgba(0,0,0,.3));
+  }
 }
