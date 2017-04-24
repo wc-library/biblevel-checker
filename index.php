@@ -125,5 +125,7 @@ include_once 'templates/header.php';
 
 </div>
 
+<footer class="body-padding"></footer>
+
 </body>
 </html>

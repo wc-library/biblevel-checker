@@ -449,10 +449,13 @@ $(function () {
             encodingLevels.push($(this).val());
         });
         formData.append('encoding-levels', encodingLevels);
+
         // Show loader and send data to server
         showLoader(outputDiv);
-        uploadData(formData);
+        // Scroll to bottom of page (#output may be off-screen)
+        $('html, body').animate({scrollTop: $(document).height()-$(window).height()}, 800);
 
+        uploadData(formData);
     });
 
     // #list-text-tab is selected by default, so add listener and set state on page load
