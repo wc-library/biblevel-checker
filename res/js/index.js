@@ -139,14 +139,17 @@ function displayResults(data) {
     // Higlighted results
     var highlightedTheadString = '<thead><tr><th>OCLC Number</th><th>Encoding Level</th></tr></thead>';
     var highlightedTableString = '<table class="table table-condensed table-striped">' + highlightedTheadString + '<tbody>';
+    // Results whose ELVL could not be determined
+    var errorTheadString = '<thead><tr><th>OCLC Number</th><th>Encoding Level</th></tr></thead>';
+    var errorTableString = '<table class="table table-condensed table-striped">' + errorTheadString + '<tbody>';
     // All results
     var resultsTheadString = '<thead><tr><th>OCLC Number</th><th>Encoding Level</th></tr></thead>';
     var resultsTableString = '<table class="table table-condensed table-striped">' + resultsTheadString + '<tbody>';
-    // TODO: add error table for OCLC numbers whose ELVL couldn't be determined
-    // Check if either table is empty
+
+    // Check if any of the tables are empty
     var highlightedTableIsEmpty = true;
     var resultsTableIsEmpty = true;
-    // TODO: check if error table is empty and don't display it if so
+    var errorTableIsEmpty = true;
 
     // Iterate through results and add them to the table
     $.each(data['results'], function (i, item) {
@@ -154,11 +157,18 @@ function displayResults(data) {
         resultsTableIsEmpty = false;
 
         var isTarget = item['elvl']['is-target-elvl'];
+        var isValid = item['elvl']['is-valid-elvl'];
+
         var tdString = '<td>' + item['oclc'] + '</td><td>' + item['elvl']['elvl'] + '</td>';
         // Add to highlighted table if the record is at one of the target ELVLs
         if (isTarget) {
             highlightedTableIsEmpty = false;
             highlightedTableString += '<tr>' + tdString + '</tr>';
+        }
+        // Add to error table if the ELVL code was not valid
+        if (!isValid) {
+            errorTableIsEmpty = false;
+            errorTableString += '<tr>' + tdString + '</tr>';
         }
         // Highlight row in all results table if target level is met
         var classString = isTarget ? ' class="info" ' : '';
@@ -173,9 +183,11 @@ function displayResults(data) {
     }
 
     highlightedTableString += '</tbody></table>';
+    errorTableString += '</tbody></table>';
     resultsTableString += '</tbody></table>';
 
     var outputDiv = $('#output');
+
     // Assemble highlightedPanel and append to output
     var highlightedPanelHeadingString = '<div class="panel-heading"><h3 class="panel-title">Records with selected encoding level(s)</h3></div>';
     var highlightedPanelBodyString =
@@ -184,6 +196,18 @@ function displayResults(data) {
         '<div class="panel panel-primary">' + highlightedPanelHeadingString +
         highlightedPanelBodyString + '</div>';
     outputDiv.html(highlightedPanel);
+
+    // If any errors occurred, display the error table
+    if (!errorTableIsEmpty) {
+        // Assemble errorPanel and append to output
+        var errorPanelHeadingString = '<div class="panel-heading"><h3 class="panel-title">Records whose encoding level(s) could not be determined</h3></div>';
+        var errorPanelBodyString =
+            '<div class="panel-body">' + errorTableString + '</div>';
+        var errorPanel =
+            '<div class="panel panel-danger">' + errorPanelHeadingString +
+            errorPanelBodyString + '</div>';
+        outputDiv.append('<hr>',errorPanel);
+    }
 
     // Assemble resultsPanel and append to output
     var resultsPanelTitleString = '<h3 id="results-collapse-toggle" class="panel-title collapse-toggle" data-toggle="collapse" href="#results-collapse">Click to see all results</h3>';
@@ -408,7 +432,6 @@ $(function () {
     // Assign listener to file upload form
     encodingLevelForm.submit(function (event) {
         event.preventDefault();
-        console.log('submit test');
 
         // If required form data isn't present, display an error and return
         var formData;

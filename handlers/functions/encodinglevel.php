@@ -129,7 +129,9 @@ function get_elvl_code($marcxml_string) {
  * Determines the meaning of an ELVL code and checks if it is one of the the target levels
  * @param string $elvl_code The ELVL code
  * @param array $target_elvls An array of target ELVLs
- * @return array
+ * @return array ['elvl'] = {string} Meaning of $elvl_code,
+ *      ['is-target-elvl'] = {boolean} Whether or not $elvl_code is in target levels,
+ *       ['is-valid-elvl'] = {boolean} Whether or not $elvl_code is valid
  */
 function check_elvl_code($elvl_code, $target_elvls) {
 
@@ -143,13 +145,14 @@ function check_elvl_code($elvl_code, $target_elvls) {
     }
     $is_target_elvl = in_array($elvl_val, $target_elvls);
 
+    $is_valid_elvl = array_key_exists($elvl_code,ELVL);
     // If $elvl_code is a valid index, use the corresponding code interpretation. Otherwise, display an error
-    // TODO: return something different if code is invalid
-    $elvl = (array_key_exists($elvl_code,ELVL)) ? ELVL[$elvl_code] : 'Encoding level could not be determined';
+    $elvl = ($is_valid_elvl) ? ELVL[$elvl_code] : 'Encoding level could not be determined';
 
-    // results can be indexed by 0, 1 as well as 'elvl', 'is-target-elvl'
+    // results can be indexed by 0, 1, 2 as well as 'elvl', 'is-target-elvl', 'is-valid-elvl'
     $elvl_array = array_fill_keys([0, 'elvl'], $elvl);
     $is_target_array = array_fill_keys([1, 'is-target-elvl'], $is_target_elvl);
-    $results = $elvl_array + $is_target_array;
+    $is_valid_array = array_fill_keys([2, 'is-valid-elvl'], $is_valid_elvl);
+    $results = $elvl_array + $is_target_array + $is_valid_array;
     return $results;
 }
