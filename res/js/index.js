@@ -102,6 +102,8 @@ function getTextInputFormData() {
 function uploadData(formData) {
     // Disable form while uploading
     disableUploadForm(true);
+    // Show loader
+    showLoader(true, 'Processing list...');
     $.ajax({
         url: 'handlers/encodinglevel_handler.php',
         dataType: 'json',
@@ -126,6 +128,7 @@ function uploadData(formData) {
         },
         complete: function () {
             disableUploadForm(false);
+            showLoader(false);
         }
     });
 }
@@ -227,13 +230,25 @@ function displayResults(data) {
 
 /**
  * Display spinning loading icon in an element
- * @param targetId String identifer or jQuery object of the element to display the loader in
+ * @param {boolean} setVisible True = show loading dialog, false = hide loading dialog
+ * @param {string} [loadingMessage] Message to display below loader
  */
-function showLoader(targetId) {
-    // Function accepts string representing id or jQuery object of element
-    var targetElement = (targetId instanceof jQuery) ? targetId : $(targetId);
-    // Clear contents of target and show loader
-    targetElement.html(loader);
+function showLoader(setVisible, loadingMessage) {
+    if (setVisible) {
+        loadingMessage = loadingMessage || 'Loading...';
+        var options = {
+            backdrop: 'static',
+            keyboard: false,
+            show: true
+        };
+        // Set loading message
+        $('#loading-dialog-message').text(loadingMessage);
+        // Toggle modal display
+        $('#loading-dialog').modal(options);
+    }
+    else {
+        $('#loading-dialog').modal('hide');
+    }
 }
 
 
@@ -450,11 +465,9 @@ $(function () {
         });
         formData.append('encoding-levels', encodingLevels);
 
-        // Show loader and send data to server
-        showLoader(outputDiv);
         // Scroll to bottom of page (#output may be off-screen)
         $('html, body').animate({scrollTop: $(document).height()-$(window).height()}, 800);
-
+        // Send data to server
         uploadData(formData);
     });
 
