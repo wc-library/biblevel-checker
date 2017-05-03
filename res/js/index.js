@@ -441,11 +441,8 @@ $(function () {
     });
 
 
-    var encodingLevelForm = $('#encoding-level-form');
-    var outputDiv = $('#output');
-
     // Assign listener to file upload form
-    encodingLevelForm.submit(function (event) {
+    $('#encoding-level-form').submit(function (event) {
         event.preventDefault();
 
         // If required form data isn't present, display an error and return
@@ -465,6 +462,8 @@ $(function () {
         });
         formData.append('encoding-levels', encodingLevels);
 
+        // Clear old output
+        $('#output').html('');
         // Scroll to bottom of page (#output may be off-screen)
         $('html, body').animate({scrollTop: $(document).height()-$(window).height()}, 800);
         // Send data to server
